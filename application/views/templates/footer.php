@@ -73,8 +73,47 @@
 <!-- <script src="https://code.highcharts.com/modules/exporting.js"></script> -->
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script>
+    // Function to generate ticket number
+    function generateTicketNumber() {
+        var today = new Date();
+        var year = today.getFullYear().toString().substr(-2);
+        var month = ('0' + (today.getMonth() + 1)).slice(-2);
+        var day = ('0' + today.getDate()).slice(-2);
+        var randomNumber = Math.floor(1000 + Math.random() * 9000); 
+        return year + month + day + randomNumber;
+    }
 
+    // Set generated ticket number to the input field
+    document.getElementById('nomorTiket').value = generateTicketNumber();
+</script>
+<script>
+    // Event listener untuk setiap input pada field jumlah pinjaman
+    document.getElementById('formatted_jumlah_pinjaman').addEventListener('input', function(event) {
+        // Mengambil nilai input
+        var input = event.target.value;
+        
+        // Menghapus karakter selain angka
+        var amount = input.replace(/\D/g, '');
+        
+        // Menyimpan nilai integer di input tersembunyi
+        document.getElementById('jumlah_pinjaman').value = amount;
+        
+        // Memformat angka menjadi format Rupiah
+        var formattedAmount = formatRupiah(amount);
+        
+        // Menampilkan nilai yang sudah diformat
+        event.target.value = formattedAmount;
+    });
 
+    // Fungsi untuk format Rupiah
+    function formatRupiah(angka) {
+        var reverse = angka.toString().split('').reverse().join(''),
+            ribuan = reverse.match(/\d{1,3}/g);
+        ribuan = ribuan.join('.').split('').reverse().join('');
+        return ribuan;
+    }
+</script>
 </body>
 
 </html>

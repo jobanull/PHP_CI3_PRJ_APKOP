@@ -19,8 +19,7 @@ class Surface extends CI_Controller
         $this->load->model('Sf_Tickets_Model');
         $this->load->model('Sf_Progress_Model');
 
-        $this->load->model('Md_Alat_Ukur_Model');
-        $this->load->model('Md_Alat_Bantu_Model');
+        $this->load->model('Md_Region_Model');
 
     }
 
@@ -53,6 +52,9 @@ class Surface extends CI_Controller
 
         $this->form_validation->set_rules('rm', 'RM', 'required');
         $this->form_validation->set_rules('tgl_registrasi', 'Tgl_Registrasi');
+        $this->form_validation->set_rules('nama_nasabah', 'Nama_Nasabah');
+        $this->form_validation->set_rules('ktp_nasabah', 'Ktp_Nasabah');
+        $this->form_validation->set_rules('jumlah_pinjaman', 'Jumlah_Pinjaman');
         $this->form_validation->set_rules('sts', 'Sts');
         $this->form_validation->set_rules('selesai', 'Selesai');
 
@@ -66,9 +68,11 @@ class Surface extends CI_Controller
             $data = [
                 'rm' => htmlentities($this->input->post('rm')),
                 'tgl_registrasi' => htmlentities($this->input->post('tgl_registrasi')),
+                'nama_nasabah' => htmlentities($this->input->post('nama_nasabah')),
+                'ktp_nasabah' => htmlentities($this->input->post('ktp_nasabah')),
+                'jumlah_pinjaman' => htmlentities($this->input->post('jumlah_pinjaman')),
                 'sts' => htmlentities($this->input->post('sts')),
                 'selesai' => htmlentities($this->input->post('selesai'))
-
             ];
             $this->db->insert('sf_tickets', $data);
 
@@ -138,58 +142,64 @@ class Surface extends CI_Controller
     }
 
     //-----------------------------------------------------------------------------------------------------
+public function preview_data($id)
+{
+    $data['title'] = 'Progress';
+    $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
 
-    public function preview_data($id)
-    {
-        $data['title'] = 'Progress';
-        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+    $data['getDataBarangById'] = $this->Sf_Tickets_Model->getDataBarangById($id);
+    $data['getDataAlatBantuResult'] = $this->Md_Region_Model->getDataAlatBantuResult();
+    $data['getDataProgressResultWithID'] = $this->Sf_Progress_Model->getDataProgressResultWithID($id);
+    $data['getDataPemeriksaanRowWitdId'] = $this->Sf_Progress_Model->getDataPemeriksaanRowWitdId($id);
 
+    $this->form_validation->set_rules('id_registrasi', 'Registrasi', 'required');
+    $this->form_validation->set_rules('jumlah_pinjaman', 'Jumlah_Pinjaman');
+    $this->form_validation->set_rules('kelompok', 'Kelompok');
+    $this->form_validation->set_rules('tanggal_pinjaman', 'Tanggal_Pinjaman');
+    $this->form_validation->set_rules('tanggal_pengembalian', 'Tanggal_Pengembalian');
+    $this->form_validation->set_rules('jumlah_pengembalian', 'Jumlah_Pengembalian');
+    $this->form_validation->set_rules('selisih', 'Selisih');
+    $this->form_validation->set_rules('status', 'Status');
 
-        $data['getDataBarangById'] = $this->Sf_Tickets_Model->getDataBarangById($id);
-        $data['getDataAlatUkurResult'] = $this->Md_Alat_Ukur_Model->getDataAlatUkurResult();
-        $data['getDataAlatBantuResult'] = $this->Md_Alat_Bantu_Model->getDataAlatBantuResult();
-        $data['getDataProgressResultWithID'] = $this->Sf_Progress_Model->getDataProgressResultWithID($id);
-        $data['getDataPemeriksaanRowWitdId'] = $this->Sf_Progress_Model->getDataPemeriksaanRowWitdId($id);
+    if ($this->form_validation->run() == false) {
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar', $data);
+        $this->load->view('templates/topbar', $data);
+        $this->load->view('surface/preview/preview_data', $data);
+        $this->load->view('templates/footer');
+    } else {
+        // Start transaction
+        $this->db->trans_begin();
 
+        $data = [
+            'id_registrasi' => htmlentities($this->input->post('id_registrasi')),
+            'jumlah_pinjaman' => htmlentities($this->input->post('jumlah_pinjaman')),
+            'kelompok' => htmlentities($this->input->post('kelompok')),
+            'tanggal_pinjaman' => htmlentities($this->input->post('tanggal_pinjaman')),
+            'jumlah_pengembalian' => htmlentities($this->input->post('jumlah_pengembalian')),
+            'tanggal_pengembalian' => htmlentities($this->input->post('tanggal_pengembalian')),
+            'selisih' => htmlentities($this->input->post('selisih')),
+            'status' => htmlentities($this->input->post('status'))
+        ];
 
-        $this->form_validation->set_rules('id_registrasi', 'Registrasi', 'required');
-        $this->form_validation->set_rules('nama_peminjam', 'Nama_Peminjam');
-        $this->form_validation->set_rules('alat_ukur', 'Alat_Ukur');
-        $this->form_validation->set_rules('alat_bantu', 'Alat_Bantu');
-        $this->form_validation->set_rules('jumlah', 'Jumlah');
-        $this->form_validation->set_rules('tanggal_peminjaman', 'Tanggal_Peminjaman');
-        $this->form_validation->set_rules('jam_peminjaman', 'Jam_Peminjaman');
-        $this->form_validation->set_rules('tanggal_pengembalian', 'Tanggal_Pengembalian');
-        $this->form_validation->set_rules('jam_pengembalian', 'Jam_Pengembalian');
-        $this->form_validation->set_rules('status', 'Status');
+        $this->db->insert('sf_progress', $data);
 
-        if ($this->form_validation->run() == false) {
-            $this->load->view('templates/header', $data);
-            $this->load->view('templates/sidebar', $data);
-            $this->load->view('templates/topbar', $data);
-            $this->load->view('surface/preview/preview_data', $data);
-            $this->load->view('templates/footer');
+        // Update sisa_pinjaman
+        $this->db->set('selisih', 'selisih - jumlah_pengembalian', FALSE);
+        $this->db->where('id_registrasi', $id);
+        $this->db->update('sf_progress');
+
+        if ($this->db->trans_status() === FALSE) {
+            // Rollback transaction if any query fails
+            $this->db->trans_rollback();
+            echo "Transaction failed!";
         } else {
-            $data = [
-                'id_registrasi' => htmlentities($this->input->post('id_registrasi')),
-                'nama_peminjam' => htmlentities($this->input->post('nama_peminjam')),
-                'alat_ukur' => htmlentities($this->input->post('alat_ukur')),
-                'alat_bantu' => htmlentities($this->input->post('alat_bantu')),
-                'jumlah' => htmlentities($this->input->post('jumlah')),
-                'tanggal_peminjaman' => htmlentities($this->input->post('tanggal_peminjaman')),
-                'jam_peminjaman' => htmlentities($this->input->post('jam_peminjaman')),
-                'tanggal_pengembalian' => htmlentities($this->input->post('tanggal_pengembalian')),
-                'jam_pengembalian' => htmlentities($this->input->post('jam_pengembalian')),
-                'status' => htmlentities($this->input->post('status'))
-            ];
-            $this->db->insert('sf_progress', $data);
-
-            $in = $id;
-            redirect(base_url() . "surface/preview_data/" . $in);
+            // Commit transaction
+            $this->db->trans_commit();
+            redirect(base_url() . "surface/preview_data/" . $id);
         }
     }
-
-   
+}
 
     public function PDF($id)
     {

@@ -34,15 +34,9 @@
     </div>
     <!-- Submenu items -->
     <li class="nav-item">
-        <a class="nav-link" href="<?= base_url('masterdata/alat_ukur'); ?>">
+        <a class="nav-link" href="<?= base_url('masterdata/region'); ?>">
             <i class="fas fa-fw fa-database"></i>
-            <span>Database Alat Ukur</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="<?= base_url('masterdata/alat_bantu'); ?>">
-            <i class="fas fa-fw fa-database"></i>
-            <span>Database Alat Bantu</span>
+            <span>Database Kelompok</span>
         </a>
     </li>
     <hr class="sidebar-divider">
