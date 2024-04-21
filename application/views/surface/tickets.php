@@ -16,18 +16,22 @@
                        <table class="table table-bordered text-center text-gray-900" id="dataTable" width="100%" cellspacing="">
                            <thead class="bg-gray-200">
                                <tr>
-                                   <th>No</th>
+                               <th>No</th>
                                    <th>No Tiket</th>
-                                   <th>Tgl. Peminjaman</th>
+                                   <th>Tgl Peminjaman</th>
+                                   <th>Nama Nasabah</th>
+                                   <th>Jumlah Pinjaman</th>
                                    <th>Status</th>
                                    <th>Aksi</th>
                                </tr>
                            </thead>
                            <tfoot class="bg-gray-200">
                                <tr>
-                               <th>No</th>
+                                   <th>No</th>
                                    <th>No Tiket</th>
-                                   <th>Tgl. Peminjaman</th>
+                                   <th>Tgl Peminjaman</th>
+                                   <th>Nama Nasabah</th>
+                                   <th>Jumlah Pinjaman</th>
                                    <th>Status</th>
                                    <th>Aksi</th>
                                </tr>
@@ -43,6 +47,8 @@
                                            <td><?= $no++; ?></td>
                                            <td><?= $row['rm']; ?></td>
                                            <td><?= $row['tgl_registrasi']; ?></td>
+                                           <td><?= $row['nama_nasabah']; ?></td>
+                                           <td>Rp. <?= number_format($row['jumlah_pinjaman'], 0, ',', '.'); ?></td>
                                            <td>
                                                <?php if ($row['selesai'] == 'a') : ?>
                                                    <p class="btn btn-danger"> Belum Selesai</p>

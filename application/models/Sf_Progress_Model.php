@@ -11,8 +11,10 @@ class Sf_Progress_Model extends CI_Model
 
     function getDataProgressResultWithID($id)
     {
+        $this->db->order_by('selisih', 'ASC');
         return $this->db->get_where('sf_progress', ['id_registrasi' => $id])->result_array();
     }
+
 
     function getDataPemeriksaanRow()
     {
